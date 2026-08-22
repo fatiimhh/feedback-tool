@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -70,6 +71,12 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Log in"}
         </button>
       </form>
+       <p className="text-sm text-center mt-4">
+  Don't have an account?{" "}
+  <Link href="/signup" className="underline">
+    Sign up
+  </Link>
+</p>
     </div>
   );
 }

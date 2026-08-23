@@ -59,6 +59,8 @@ export default async function DashboardPage() {
 
       <h2 className="text-lg font-medium mb-4">Review cycles</h2>
 
+        {/* Display the list of review cycles */}
+
       {!cycles || cycles.length === 0 ? (
         <p className="text-gray-500 text-sm">
           No review cycles yet. {membership.role !== "member" && "Create one to get started."}
@@ -66,34 +68,39 @@ export default async function DashboardPage() {
       ) : (
         <ul className="space-y-3">
           {cycles.map((cycle) => (
-           <li key={cycle.id} className="border rounded p-4">
-  <div className="flex items-center justify-between">
-    <Link href={`/cycles/${cycle.id}`} className="font-medium underline">
+          <li key={cycle.id} className="border rounded p-4">
+      <div className="flex items-center justify-between">
+       <Link href={`/cycles/${cycle.id}`} className="font-medium underline">
       {cycle.title}
-    </Link>
-    <span className="text-xs uppercase text-gray-500">
-      {cycle.status}
-    </span>
-  </div>
-</li>
+         </Link>
+     <div className="flex items-center gap-3">
+        {membership.role !== "member" && (
+         <Link href={`/cycles/${cycle.id}/results`} className="text-xs underline">
+            Results
+          </Link>
+       )}
+        <span className="text-xs uppercase text-gray-500">{cycle.status}</span>
+     </div>
+    </div>
+  </li>
           ))}
         </ul>
       )}
-      
+
       {/* Feedback to give section */}
       <h2 className="text-lg font-medium mb-4 mt-10">Feedback to give</h2>
 
-{!myAssignments || myAssignments.length === 0 ? (
-  <p className="text-gray-500 text-sm">Nothing assigned to you yet.</p>
-) : (
-  <ul className="space-y-3">
-    {myAssignments.map((a) => {
-      const cycle = a.review_cycles as unknown as {
-        id: string;
-        title: string;
-        status: string;
-      };
-      return (
+      {!myAssignments || myAssignments.length === 0 ? (
+       <p className="text-gray-500 text-sm">Nothing assigned to you yet.</p>
+        ) : (
+        <ul className="space-y-3">
+          {myAssignments.map((a) => {
+          const cycle = a.review_cycles as unknown as {
+         id: string;
+         title: string;
+         status: string;
+        };
+        return (
         <li key={a.id} className="border rounded p-4 flex items-center justify-between">
           <div>
             <p className="font-medium">{cycle.title}</p>

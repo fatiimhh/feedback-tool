@@ -28,6 +28,12 @@ export default async function DashboardPage() {
     .eq("org_id", membership.org_id)
     .order("created_at", { ascending: false });
 
+    // Fetch the assignments for the user
+    const { data: myAssignments } = await supabase
+  .from("cycle_participants")
+  .select("id, submitted, subject_user_id, review_cycles(id, title, status)")
+  .eq("reviewer_user_id", userData.user.id);
+
   const orgName = (membership.organizations as unknown as { name: string })?.name;
 
   return (
@@ -73,6 +79,41 @@ export default async function DashboardPage() {
           ))}
         </ul>
       )}
+      
+      {/* Feedback to give section */}
+      <h2 className="text-lg font-medium mb-4 mt-10">Feedback to give</h2>
+
+{!myAssignments || myAssignments.length === 0 ? (
+  <p className="text-gray-500 text-sm">Nothing assigned to you yet.</p>
+) : (
+  <ul className="space-y-3">
+    {myAssignments.map((a) => {
+      const cycle = a.review_cycles as unknown as {
+        id: string;
+        title: string;
+        status: string;
+      };
+      return (
+        <li key={a.id} className="border rounded p-4 flex items-center justify-between">
+          <div>
+            <p className="font-medium">{cycle.title}</p>
+            <p className="text-xs text-gray-500">
+              {a.submitted ? "Submitted" : "Not submitted"}
+            </p>
+          </div>
+          {cycle.status === "open" && !a.submitted && (
+            <Link
+              href={`/cycles/${cycle.id}/review/${a.id}`}
+              className="bg-black text-white rounded px-3 py-1.5 text-sm"
+            >
+              Give feedback
+            </Link>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+)}
     </div>
   );
 }

@@ -35,6 +35,7 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-semibold">{orgName}</h1>
+          <p className="text-xs text-gray-400 mt-1">Org ID: {membership.org_id}</p> {/*Display the org ID*/}
           <p className="text-sm text-gray-600">
             Logged in as {membership.full_name} ({membership.role})
           </p>

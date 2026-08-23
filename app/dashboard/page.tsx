@@ -60,14 +60,16 @@ export default async function DashboardPage() {
       ) : (
         <ul className="space-y-3">
           {cycles.map((cycle) => (
-            <li key={cycle.id} className="border rounded p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{cycle.title}</span>
-                <span className="text-xs uppercase text-gray-500">
-                  {cycle.status}
-                </span>
-              </div>
-            </li>
+           <li key={cycle.id} className="border rounded p-4">
+  <div className="flex items-center justify-between">
+    <Link href={`/cycles/${cycle.id}`} className="font-medium underline">
+      {cycle.title}
+    </Link>
+    <span className="text-xs uppercase text-gray-500">
+      {cycle.status}
+    </span>
+  </div>
+</li>
           ))}
         </ul>
       )}

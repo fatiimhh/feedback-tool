@@ -49,16 +49,18 @@ export default async function DashboardPage() {
           </p>
         </div> 
 
-        <LogoutButton /> 
-
-        {membership.role !== "member" && (
-          <Link
-            href="/cycles/new"
-            className="bg-black text-white rounded px-4 py-2 text-sm"
-          >
-            New review cycle
-          </Link>
+            <div className="flex items-center gap-3">
+          <LogoutButton />
+          
+         {membership.role !== "member" && (
+           <Link
+                href="/cycles/new"
+             className="bg-black text-white rounded px-4 py-2 text-sm"
+           >
+      New review cycle
+         </Link>
         )}
+      </div>
       </div>
 
       <h2 className="text-lg font-medium mb-4">Review cycles</h2>

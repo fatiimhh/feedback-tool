@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import LogoutButton from "./logout-button";
+
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -45,7 +47,9 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-600">
             Logged in as {membership.full_name} ({membership.role})
           </p>
-        </div>
+        </div> 
+
+        <LogoutButton /> 
 
         {membership.role !== "member" && (
           <Link

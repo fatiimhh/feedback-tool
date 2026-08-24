@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+
 interface Member {
   user_id: string;
   full_name: string;
@@ -25,6 +26,7 @@ export default function CycleDetailPage() {
   const [reviewerId, setReviewerId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [cycleStatus, setCycleStatus] = useState<string>("draft"); // New state variable for cycle status
 
   const loadData = useCallback(async () => {
     const supabase = createClient();
@@ -53,12 +55,36 @@ export default function CycleDetailPage() {
       .eq("cycle_id", cycleId);
 
     setAssignments(existingAssignments ?? []);
+
+
+    const { data: cycleData } = await supabase // to fetch the cycle status
+  .from("review_cycles")
+  .select("status")
+  .eq("id", cycleId)
+  .single();
+
+if (cycleData) setCycleStatus(cycleData.status);
   }, [cycleId]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
+  //to update the cycle status in the database and locally
+async function updateStatus(newStatus: string) {
+  const supabase = createClient();
+  const { error: updateError } = await supabase
+    .from("review_cycles")
+    .update({ status: newStatus })
+    .eq("id", cycleId);
+
+  if (updateError) {
+    setError(updateError.message);
+    return;
+  }
+
+  setCycleStatus(newStatus);
+}
   async function handleAssign(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -96,6 +122,29 @@ export default function CycleDetailPage() {
   return (
     <div className="max-w-xl mx-auto mt-16 p-6">
       <h1 className="text-2xl font-semibold mb-6">Assign reviewers</h1>
+
+      
+<div className="flex items-center gap-3 mb-6">
+  <span className="text-xs uppercase text-gray-500 border rounded px-2 py-1">
+    {cycleStatus}
+  </span>
+  {cycleStatus === "draft" && (
+    <button
+      onClick={() => updateStatus("open")}
+      className="text-sm underline"
+    >
+      Open cycle
+    </button>
+  )}
+  {cycleStatus === "open" && (
+    <button
+      onClick={() => updateStatus("closed")}
+      className="text-sm underline"
+    >
+      Close cycle
+    </button>
+  )}
+</div>
 
       {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 

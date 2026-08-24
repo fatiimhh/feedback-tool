@@ -28,6 +28,7 @@ export default function CycleDetailPage() {
   const [loading, setLoading] = useState(false);
   const [cycleStatus, setCycleStatus] = useState<string>("draft"); // New state variable for cycle status
   const [loadingData, setLoadingData] = useState(true);
+  const [cycleNotFound, setCycleNotFound] = useState(false);
 
   const loadData = useCallback(async () => {
     const supabase = createClient();
@@ -58,14 +59,22 @@ export default function CycleDetailPage() {
     setAssignments(existingAssignments ?? []);
     setLoadingData(false); 
 
-
-    const { data: cycleData } = await supabase // to fetch the cycle status
+//to fetch the cycle status from the database
+    const { data: cycleData, error: cycleError } = await supabase
   .from("review_cycles")
   .select("status")
   .eq("id", cycleId)
   .single();
 
-if (cycleData) setCycleStatus(cycleData.status);
+if (cycleError || !cycleData) {
+  setCycleNotFound(true);
+  setLoadingData(false);
+  return;
+}
+
+setCycleStatus(cycleData.status);
+
+
   }, [cycleId]);
 
   useEffect(() => {
@@ -125,6 +134,14 @@ async function updateStatus(newStatus: string) {
   return <p className="text-center mt-20 text-sm text-gray-500">Loading...</p>;
 }
 
+//to display a message if the cycle doesn't exist or the user doesn't have access to it
+if (cycleNotFound) {
+  return (
+    <p className="text-center mt-20 text-sm text-gray-500">
+      This review cycle doesn't exist or you don't have access to it.
+    </p>
+  );
+}
   return (
     <div className="max-w-xl mx-auto mt-16 p-6">
       <h1 className="text-2xl font-semibold mb-6">Assign reviewers</h1>

@@ -27,6 +27,7 @@ export default function CycleDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cycleStatus, setCycleStatus] = useState<string>("draft"); // New state variable for cycle status
+  const [loadingData, setLoadingData] = useState(true);
 
   const loadData = useCallback(async () => {
     const supabase = createClient();
@@ -55,6 +56,7 @@ export default function CycleDetailPage() {
       .eq("cycle_id", cycleId);
 
     setAssignments(existingAssignments ?? []);
+    setLoadingData(false); 
 
 
     const { data: cycleData } = await supabase // to fetch the cycle status
@@ -118,6 +120,10 @@ async function updateStatus(newStatus: string) {
   function nameFor(userId: string) {
     return members.find((m) => m.user_id === userId)?.full_name ?? "Unknown";
   }
+
+  if (loadingData) {
+  return <p className="text-center mt-20 text-sm text-gray-500">Loading...</p>;
+}
 
   return (
     <div className="max-w-xl mx-auto mt-16 p-6">

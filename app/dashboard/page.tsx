@@ -40,7 +40,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="max-w-2xl mx-auto mt-16 p-6">
-      <div className="flex items-center justify-between mb-8">
+     <div className="flex items-center justify-between gap-6 mb-8 flex-wrap">
         <div>
           <h1 className="text-2xl font-semibold">{orgName}</h1>
           <p className="text-xs text-gray-400 mt-1">Org ID: {membership.org_id}</p> {/*Display the org ID*/}
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
 
             <div className="flex items-center gap-3">
           <LogoutButton />
-          
+
          {membership.role !== "member" && (
            <Link
                 href="/cycles/new"
